@@ -33,6 +33,23 @@ def convert_notebooks(name):
                          os.path.join(landing_path, notebook)],
                         stdout=FNULL, stderr=subprocess.STDOUT)
 
+def comment_non_function_lines(name):
+    landing_path = os.path.join(DATA_DIR, name.split('.')[0])
+    scripts = [f for f in os.listdir(landing_path) if f.endswith('.py')]
+    for script in scripts:
+        with open(os.path.join(landing_path, script), 'rt') as f:
+            script_text_lines = f.read().split('\n')
+            augmented_script_text_lines = list()
+            for line in script_text_lines:
+                if line.startswith('def') or line.startswith(' ') or line.startswith('\t'):
+                    augmented_script_text_lines.append(line)
+                else:
+                    augmented_script_text_lines.append('#' + line)
+        with open(os.path.join(landing_path, script), 'wt') as f:
+            f.write('\n'.join(augmented_script_text_lines))
+    return None
+
+
 def create_results_directory(name):
     results_path = os.path.join(DATA_DIR, name.split('.')[0] + '_results')
     remove_existsing_directory(results_path)
@@ -58,7 +75,8 @@ def grade_assignment(name):
             unittest.TextTestRunner(f, verbosity=2).run(suite)
 
 def _get_delimiter(test_output):
-    return next(i for i, line in enumerate(test_output) if line.startswith('==='))
+    return next(i for i, line in enumerate(test_output) if
+                line.startswith('===') or line.startswith('---'))
 
 def _parse_tests(tests, student):
     result = list()
@@ -144,6 +162,7 @@ if __name__ == '__main__':
     unzip_assignment(zip_file_loc, test_file_name)
     print('Converting Notebooks')
     convert_notebooks(test_file_name)
+    comment_non_function_lines(test_file_name)
     create_results_directory(test_file_name)
     print('Grading')
     grade_assignment(test_file_name)
