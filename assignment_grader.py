@@ -63,8 +63,11 @@ def grade_assignment(name):
 
     for script in scripts:
         module_name = script.split('.')[0]
-        submission = importlib.import_module(
-            f'data.{name.split(".")[0]}.{module_name}', package=None)
+        try:
+            submission = importlib.import_module(
+                f'data.{name.split(".")[0]}.{module_name}', package=None)
+        except:
+            continue
         tests = importlib.import_module(
             f'test.{name.split(".")[0]}', package=None)
         for obj in dir(submission):
