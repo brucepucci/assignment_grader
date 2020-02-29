@@ -31,7 +31,7 @@ def convert_notebooks(name):
     for notebook in notebooks:
         subprocess.call(['jupyter', 'nbconvert', '--to', 'python',
                          os.path.join(landing_path, notebook)],
-                        stdout=FNULL, stderr=subprocess.STDOUT)
+                         stdout=FNULL, stderr=subprocess.STDOUT)
 
 def comment_non_function_lines(name):
     landing_path = os.path.join(DATA_DIR, name.split('.')[0])
