@@ -41,7 +41,7 @@ def comment_non_function_lines(name):
             script_text_lines = f.read().split('\n')
             augmented_script_text_lines = list()
             for line in script_text_lines:
-                if line.startswith('def') or line.startswith(' ') or line.startswith('\t'):
+                if line.startswith('def') or line.startswith(' ') or line.startswith('\t') or line.startswith('city') or line.startswith('import') or line.startswith('}'):
                     augmented_script_text_lines.append(line)
                 else:
                     augmented_script_text_lines.append('#' + line)
@@ -63,11 +63,8 @@ def grade_assignment(name):
 
     for script in scripts:
         module_name = script.split('.')[0]
-        try:
-            submission = importlib.import_module(
-                f'data.{name.split(".")[0]}.{module_name}', package=None)
-        except:
-            continue
+        submission = importlib.import_module(
+            f'data.{name.split(".")[0]}.{module_name}', package=None)
         tests = importlib.import_module(
             f'test.{name.split(".")[0]}', package=None)
         for obj in dir(submission):
@@ -116,6 +113,7 @@ def assignment_summary(name):
     return pd.DataFrame(records)
 
 def write_summary(df, name):
+    print(df)
     results_path = os.path.join(DATA_DIR, name.split('.')[0] + '_results')
     df.to_csv(os.path.join(results_path, 'detail.csv'), index=False)
 
